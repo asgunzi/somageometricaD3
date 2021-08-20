@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+ <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+</meta>
+
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+    <head>
+	
+        <title>Demonstração visual de soma geométrica</title>
+	    <script src="https://d3js.org/d3.v5.min.js"></script>
+    </head>
+    <style>
+		th, td {
+		    text-align: left;
+		    
+		}
+	</style>
+
+    <body>
+
+      <h1><a href="https://ideiasesquecidas.com"> <img src=	"https://ideiasesquecidas.files.wordpress.com/2020/03/forgottenlogo.png" width="90" height = "50"></a> Demonstração visual de soma geométrica</h1>
+	
+	<table style = "width:30%">
+  	<tr>
+    <th>N. Elementos:</th>
+    </tr>
+    <tr>
+    <td>
+    <form>
+		  <select onchange = "Desenha()" name="Pontos" id="SelectPontos">
+		    <option value="1" selected >1</option>
+		    <option value="2">2</option>
+		    <option value="3">3</option>
+		    <option value="4">4</option>
+		    <option value="5">5</option>
+		    <option value="6">6</option>
+		    <option value="7">7</option>
+		    <option value="8">8</option>
+		    <option value="9">9</option>
+		    <option value="10">10</option>
+		  </select>
+		  <br><br>
+		</form>
+		</td>
+    
+	  </tr>
+	</table>
+	       
+	<p id="Formula"></p>
+	
+        <script type = "text/javascript">
+
+
+        var svg = d3.select("body").append("svg");
+
+
+        var limX = 1500;
+        var limY = 1000;
+        
+        //Define dimensions of svg
+        svg.attr("width", limX)
+        .attr("height",limY);
+
+        Desenha();
+
+
+        function Desenha()
+        {
+        
+        //Clear svg
+		svg.selectAll("*").remove();
+
+        //dados e definicoes macro
+        var N = d3.select("#SelectPontos").property("value");
+        var cor = [];
+        
+        var i;
+		var l;
+		var p;
+        var x0 =[];
+        var y0 =[];
+		var x0ref;
+		var y0ref;
+		
+		l = 25; //Tamanho
+		p = 0; //Padding
+		
+		//Primeiro valor
+		x0.push(l);
+		y0.push(l);
+		cor.push("rgb(250,0,0)");
+			
+		//Cria o array de dados
+        for (i = 1; i<= N; i++)
+        {	
+			cor1 = 0;
+			cor2 = String(Math.floor(255-i* 255/10)) ;
+			cor3 = String(Math.floor(255-i* 255/20)) ;
+
+			if (i % 2 == 0)
+			{
+				x0ref =(l+p)*2**(i/2-1);
+				y0ref = 0;
+				
+				for (j = 1; j<= 2**(i/2); j++)
+				{	
+					for (k = 1; k<= 2**(i/2-1); k++)
+					{	
+						x0.push(x0ref + l*k);
+						y0.push(y0ref + l*j);
+						cor.push("rgb(" + cor1 + "," + cor2 + "," + cor3 + ")");
+					}
+				}
+			}
+			else
+			{	
+				x0ref = 0;
+				y0ref = (l+p)*2**((i+1)/2-1);
+				
+				for (j = 1; j<= 2**((i+1)/2-1); j++)
+				{	
+					for (k = 1; k<= 2**((i+1)/2-1); k++)
+					{	
+						x0.push(x0ref + l*k);
+						y0.push(y0ref + l*j);
+						cor.push("rgb(" + cor1 + "," + cor2 + ","+ cor3+ ")");
+						
+					}
+				}
+			}
+		}
+        
+        //Cria os pontos
+        var rect1 = svg.selectAll("rect")
+			.data(x0)
+        	.enter()
+        	.append("rect")
+			.transition();
+
+        rect1.attr("x", function(d,i){
+        			return x0[i];
+        		})
+        		.attr("y", function(d,i){return y0[i];})
+        		.attr("width", l)
+        		.attr("height", l)
+				.attr("fill", function(d,i){return cor[i];})
+        		.attr("stroke","rgb(0,0,0)")
+        		.attr("stroke-width","1");
+		
+		var formula="";
+		for (i=1;i<=N;i++){
+			if (i>1)
+			{
+		    formula += "+";
+			}
+			formula += 2**(i-1);
+			}
+		formula += " = ";
+		formula +=  2**N - 1;
+		formula +=  "   (Desconsiderar o quadrado vermelho)"
+
+		d3.select("#Formula").text(formula)
+
+		}	
+		</script>
+
+    </body>
+</html>
